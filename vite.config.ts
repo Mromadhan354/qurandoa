@@ -12,9 +12,12 @@ export default defineConfig({
   optimizeDeps: {
     entries: ["src/main.tsx", "src/tempobook/**/*"],
   },
-  plugins: [react(), process.env.TEMPO === "true" ? tempo() : null].filter(
-    Boolean,
-  ),
+  plugins: [
+    react(),
+    process.env.TEMPO === "true" || process.env.NODE_ENV === "development"
+      ? tempo()
+      : null,
+  ].filter(Boolean),
   resolve: {
     preserveSymlinks: true,
     alias: {
@@ -29,5 +32,8 @@ export default defineConfig({
     outDir: "dist",
     sourcemap: false,
     chunkSizeWarningLimit: 1600,
+    rollupOptions: {
+      external: ["tempo-routes"],
+    },
   },
 });

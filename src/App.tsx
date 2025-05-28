@@ -1,8 +1,15 @@
 import { Suspense, useEffect } from "react";
 import { useRoutes, Routes, Route } from "react-router-dom";
 import Home from "./components/home";
-import routes from "tempo-routes";
+// Import tempo-routes conditionally
 import PrayerDetail from "./pages/prayer/[id]";
+
+// Add type declaration for AdSense
+declare global {
+  interface Window {
+    adsbygoogle: any[];
+  }
+}
 
 function AdBanner() {
   useEffect(() => {
@@ -36,7 +43,16 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/prayer/:id" element={<PrayerDetail />} />
         </Routes>
-        {import.meta.env.VITE_TEMPO === "true" && useRoutes(routes)}
+        {import.meta.env.VITE_TEMPO === "true" &&
+          (() => {
+            // Dynamic import for tempo-routes only in development
+            try {
+              const routes = require("tempo-routes").default;
+              return useRoutes(routes);
+            } catch (e) {
+              return null;
+            }
+          })()}
         <AdBanner />
       </>
     </Suspense>
